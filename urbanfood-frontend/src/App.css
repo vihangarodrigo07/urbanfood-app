@@ -1,0 +1,75 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Navbar styles */
+  .navbar {
+    background: #2c3e50;
+    padding: 1rem 2rem;
+  }
+  
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .navbar-logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .navbar-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s;
+  }
+  
+  .navbar-links a:hover {
+    opacity: 0.8;
+  }
+  
+  /* Page container (optional) */
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Dark Mode Styles */
+.app-container.dark,
+.app-container.dark .home-container {
+  background: #121212;
+  color: #ffffff;
+}
+
+.app-container.dark .service-card {
+  background: #1e1e1e;
+  color: #ffffff;
+}
+
+.app-container.dark .service-card p {
+  color: #b0b0b0;
+}
+
+.navbar.dark {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
