@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import Products from './pages/Products';
+import Orders from './pages/Orders';
 import './App.css';
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </div>
     </Router>

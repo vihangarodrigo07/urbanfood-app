@@ -32,44 +32,49 @@
   }
   
   /* Service cards */
-  .service-card {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: #2c3e50;
-  }
-  
-  .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .service-icon {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 1rem;
-  }
-  
-  .service-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .service-card p {
-    color: #7f8c8d;
-    font-size: 1rem;
-  }
+/* Enhanced Service Cards */
+.service-card {
+  background: var(--card-color);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
 
-  /* Add this at the bottom */
-.home-container.dark {
-    background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%) !important;
-  }
-  
-  .home-container.dark .hero-section h1,
-  .home-container.dark .service-card h3 {
-    color: #ffffff;
-  }
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255,255,255,0.3) 0%,
+    rgba(255,255,255,0) 60%
+  );
+  transform: rotate(30deg);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover::before {
+  transform: rotate(30deg) translate(-10px, -10px);
+}
+
+.service-card p {
+  color: rgba(255,255,255,0.8);
+}
+
+/* Dark mode adjustments */
+.home-container.dark .service-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.home-container.dark .service-card p {
+  color: rgba(255,255,255,0.7);
+}
