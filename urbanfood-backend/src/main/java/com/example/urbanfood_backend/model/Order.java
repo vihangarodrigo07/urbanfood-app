@@ -1,24 +1,25 @@
 package com.example.urbanfood_backend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Order {
     private int orderId;
     private int customerId;
-    private String orderDate;  // Or use LocalDate if preferred
+    private String orderDate;
     private double totalAmount;
+    private List<OrderItem> items;
 
-    // Getters (matching Product.java style)
+    // Getters
     public int getOrderId() { return orderId; }
     public int getCustomerId() { return customerId; }
     public String getOrderDate() { return orderDate; }
     public double getTotalAmount() { return totalAmount; }
+    public List<OrderItem> getItems() { return items; }
 
-    // Setters if needed
+    // Setters
     public void setOrderId(int orderId) { this.orderId = orderId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
+    public void setOrderDate(String orderDate) { this.orderDate = orderDate; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public void setItems(List<OrderItem> items) { this.items = items; }
 }

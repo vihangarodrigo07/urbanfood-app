@@ -1,6 +1,7 @@
-package com.example.urbanfood_backend.contoller;
+package com.example.urbanfood_backend.controller;
 
 import com.example.urbanfood_backend.model.Order;
+import com.example.urbanfood_backend.model.OrderItem;
 import com.example.urbanfood_backend.repository.OrderRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,30 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> addOrder(@RequestBody Order order) {
         try {
+            // First validate the order
+            if (order.getCustomerId() <= 0) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "Invalid Customer ID")
+                );
+            }
+            if (order.getItems() == null || order.getItems().isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "Order must contain at least one item")
+                );
+            }
+
+            // Calculate total amount if not provided
+            if (order.getTotalAmount() == 0) {
+                double total = order.getItems().stream()
+                        .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
+                        .sum();
+                order.setTotalAmount(total);
+            }
+
+            // Save the order
             int orderId = orderRepository.addOrder(order);
+            orderRepository.addOrderItems(orderId, order.getItems());
+
             return ResponseEntity.ok(Map.of(
                     "message", "Order added successfully",
                     "orderId", orderId
@@ -58,13 +82,36 @@ public class OrderController {
     public ResponseEntity<?> updateOrder(@PathVariable int id, @RequestBody Order order) {
         try {
             order.setOrderId(id);
+
+            // Validate the order
+            if (order.getCustomerId() <= 0) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "Invalid Customer ID")
+                );
+            }
+            if (order.getItems() == null || order.getItems().isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "Order must contain at least one item")
+                );
+            }
+
+            // Calculate total amount if not provided
+            if (order.getTotalAmount() == 0) {
+                double total = order.getItems().stream()
+                        .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
+                        .sum();
+                order.setTotalAmount(total);
+            }
+
             boolean success = orderRepository.updateOrder(order);
             if (success) {
                 return ResponseEntity.ok(Map.of(
                         "message", "Order updated successfully"
                 ));
             }
-            throw new RuntimeException("Failed to update order");
+            return ResponseEntity.status(404).body(
+                    Map.of("error", "Order not found")
+            );
         } catch (SQLException e) {
             return ResponseEntity.status(500).body(
                     Map.of("error", "Database error",
@@ -87,7 +134,9 @@ public class OrderController {
                         "message", "Order deleted successfully"
                 ));
             }
-            throw new RuntimeException("Failed to delete order");
+            return ResponseEntity.status(404).body(
+                    Map.of("error", "Order not found")
+            );
         } catch (SQLException e) {
             return ResponseEntity.status(500).body(
                     Map.of("error", "Database error",
