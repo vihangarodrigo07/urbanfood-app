@@ -36,7 +36,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> addOrder(@RequestBody Order order) {
         try {
-            // First validate the order
+            // Validate the order
             if (order.getCustomerId() <= 0) {
                 return ResponseEntity.badRequest().body(
                         Map.of("error", "Invalid Customer ID")
@@ -48,13 +48,11 @@ public class OrderController {
                 );
             }
 
-            // Calculate total amount if not provided
-            if (order.getTotalAmount() == 0) {
-                double total = order.getItems().stream()
-                        .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
-                        .sum();
-                order.setTotalAmount(total);
-            }
+            // Calculate total amount
+            double totalAmount = order.getItems().stream()
+                    .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
+                    .sum();
+            order.setTotalAmount(totalAmount);
 
             // Save the order
             int orderId = orderRepository.addOrder(order);
@@ -95,13 +93,11 @@ public class OrderController {
                 );
             }
 
-            // Calculate total amount if not provided
-            if (order.getTotalAmount() == 0) {
-                double total = order.getItems().stream()
-                        .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
-                        .sum();
-                order.setTotalAmount(total);
-            }
+            // Calculate total amount
+            double totalAmount = order.getItems().stream()
+                    .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
+                    .sum();
+            order.setTotalAmount(totalAmount);
 
             boolean success = orderRepository.updateOrder(order);
             if (success) {

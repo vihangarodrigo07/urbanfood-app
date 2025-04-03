@@ -4,8 +4,7 @@ import com.example.urbanfood_backend.model.Order;
 import com.example.urbanfood_backend.model.OrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -36,11 +35,13 @@ public class OrderRepository {
         for (Order order : orders) {
             String itemsSql = "SELECT ProductID, Quantity, UnitPrice FROM Order_Product WHERE OrderID = ?";
             List<OrderItem> items = jdbcTemplate.query(itemsSql,
-                    (rs, rowNum) -> new OrderItem(
-                            rs.getInt("ProductID"),
-                            rs.getInt("Quantity"),
-                            rs.getDouble("UnitPrice")
-                    ),
+                    (rs, rowNum) -> {
+                        OrderItem item = new OrderItem();
+                        item.setProductId(rs.getInt("ProductID"));
+                        item.setQuantity(rs.getInt("Quantity"));
+                        item.setUnitPrice(rs.getDouble("UnitPrice"));
+                        return item;
+                    },
                     order.getOrderId()
             );
             order.setItems(items);
@@ -50,43 +51,39 @@ public class OrderRepository {
     }
 
     public int addOrder(Order order) throws SQLException {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO \"Order\" (CustomerID, OrderDate, TotalAmount) VALUES (?, ?, ?)",
-                    new String[]{"OrderID"}
-            );
-            ps.setInt(1, order.getCustomerId());
-            ps.setString(2, order.getOrderDate());
-            ps.setDouble(3, order.getTotalAmount());
-            return ps;
-        }, keyHolder);
-
-        return keyHolder.getKey().intValue();
+        return jdbcTemplate.execute((Connection conn) -> {
+            CallableStatement cs = conn.prepareCall("{ call add_order(?, ?, ?, ?) }");
+            cs.setInt(1, order.getCustomerId());
+            cs.setString(2, order.getOrderDate());
+            cs.setDouble(3, order.getTotalAmount());
+            cs.registerOutParameter(4, Types.NUMERIC);
+            cs.execute();
+            return cs.getInt(4);
+        });
     }
 
-    public void addOrderItems(int orderId, List<OrderItem> items) {
-        String sql = "INSERT INTO Order_Product (OrderID, ProductID, Quantity, UnitPrice) VALUES (?, ?, ?, ?)";
-
-        jdbcTemplate.batchUpdate(sql, items, items.size(),
-                (ps, item) -> {
-                    ps.setInt(1, orderId);
-                    ps.setInt(2, item.getProductId());
-                    ps.setInt(3, item.getQuantity());
-                    ps.setDouble(4, item.getUnitPrice());
-                });
+    public void addOrderItems(int orderId, List<OrderItem> items) throws SQLException {
+        for (OrderItem item : items) {
+            jdbcTemplate.update(
+                    "{ call add_order_item(?, ?, ?, ?) }",
+                    orderId,
+                    item.getProductId(),
+                    item.getQuantity(),
+                    item.getUnitPrice()
+            );
+        }
     }
 
     public boolean updateOrder(Order order) throws SQLException {
         // First update the order
-        int rowsUpdated = jdbcTemplate.update(
-                "UPDATE \"Order\" SET CustomerID = ?, OrderDate = ?, TotalAmount = ? WHERE OrderID = ?",
-                order.getCustomerId(),
-                order.getOrderDate(),
-                order.getTotalAmount(),
-                order.getOrderId()
-        );
+        int rowsUpdated = jdbcTemplate.execute((Connection conn) -> {
+            CallableStatement cs = conn.prepareCall("{ call update_order(?, ?, ?, ?) }");
+            cs.setInt(1, order.getOrderId());
+            cs.setInt(2, order.getCustomerId());
+            cs.setString(3, order.getOrderDate());
+            cs.setDouble(4, order.getTotalAmount());
+            return cs.executeUpdate();
+        });
 
         if (rowsUpdated > 0) {
             // Delete existing items
@@ -106,7 +103,11 @@ public class OrderRepository {
         jdbcTemplate.update("DELETE FROM Order_Product WHERE OrderID = ?", orderId);
 
         // Then delete the order
-        int rowsDeleted = jdbcTemplate.update("DELETE FROM \"Order\" WHERE OrderID = ?", orderId);
+        int rowsDeleted = jdbcTemplate.execute((Connection conn) -> {
+            CallableStatement cs = conn.prepareCall("{ call delete_order(?) }");
+            cs.setInt(1, orderId);
+            return cs.executeUpdate();
+        });
         return rowsDeleted > 0;
     }
 }
