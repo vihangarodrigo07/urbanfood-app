@@ -61,7 +61,6 @@ export default function Home() {
     <div className="home-container">
       <div className="hero-section">
         <h1>UrbanFood Dashboard</h1>
-        <p>Manage your business operations seamlessly</p>
       </div>
 
       <div className="services-grid">
