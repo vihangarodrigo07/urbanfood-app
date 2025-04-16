@@ -28,7 +28,7 @@ Installations
 
 2. Database Setup:
     Run query files in Oracle SQL Developer.
-    Insert sample data ()
+    Insert sample data (database/DummyData.sql)
 
 3. Backend:
     cd backend
