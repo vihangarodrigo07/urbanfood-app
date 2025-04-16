@@ -15,24 +15,39 @@ const Orders = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Create axios instance with base URL and headers
+  const api = axios.create({
+    baseURL: 'http://localhost:8080/api',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true
+  });
+
   const fetchData = async () => {
     try {
       setLoading(true);
       setError('');
+      
+      // Use Promise.all to fetch both orders and products
       const [ordersRes, productsRes] = await Promise.all([
-        axios.get('http://localhost:8080/api/orders'),
-        axios.get('http://localhost:8080/api/products')
+        api.get('/orders'),
+        api.get('/products')
       ]);
+      
       setOrders(ordersRes.data);
       setProducts(productsRes.data);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to load data');
+      console.error('Fetch error:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { 
+    fetchData(); 
+  }, []);
 
   const handleProductChange = (productId, quantity) => {
     const updatedItems = [...order.items];
@@ -80,15 +95,12 @@ const Orders = () => {
         throw new Error('Please add at least one product');
       }
 
-      const url = order.orderId 
-        ? `http://localhost:8080/api/orders/${order.orderId}`
-        : 'http://localhost:8080/api/orders';
-      
+      const url = order.orderId ? `/orders/${order.orderId}` : '/orders';
       const method = order.orderId ? 'put' : 'post';
       
-      const response = await axios[method](url, order);
+      const response = await api[method](url, order);
       
-      if (response.data.message) {
+      if (response.data) {
         await fetchData();
         setOrder({
           orderId: null,
@@ -99,7 +111,8 @@ const Orders = () => {
         });
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.message || 'Operation failed');
+      console.error('Submit error:', err);
+      setError(err.response?.data?.message || err.message || 'Operation failed');
     } finally {
       setLoading(false);
     }
@@ -110,10 +123,11 @@ const Orders = () => {
     
     try {
       setLoading(true);
-      await axios.delete(`http://localhost:8080/api/orders/${id}`);
+      await api.delete(`/orders/${id}`);
       await fetchData();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to delete order');
+      console.error('Delete error:', err);
+      setError(err.response?.data?.message || 'Failed to delete order');
     } finally {
       setLoading(false);
     }

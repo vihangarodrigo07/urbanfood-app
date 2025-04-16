@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
+import Payments from './pages/Payments';
 import './App.css';
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Link to="/products">Products</Link>
             <Link to="/orders">Orders</Link>
             <Link to="/customers">Customers</Link>
+            <Link to="/payments">Payments</Link>
             <button 
               onClick={toggleDarkMode} 
               className="dark-mode-toggle"
@@ -42,6 +44,7 @@ export default function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
+          <Route path="/payments" element={<Payments />} />
         </Routes>
       </div>
     </Router>

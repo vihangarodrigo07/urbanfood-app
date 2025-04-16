@@ -1,4 +1,4 @@
-package com.example.urbanfood_backend.controller;
+package com.example.urbanfood_backend.contoller;
 
 import com.example.urbanfood_backend.model.Order;
 import com.example.urbanfood_backend.model.OrderItem;
