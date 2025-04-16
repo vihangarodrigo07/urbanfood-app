@@ -1,8 +1,8 @@
 🛒 UrbanFood E-Commerce Platform
-Batch: HNDSE24.2F | Module: Data Management 2
-Group No: 
-Members:COHNDSE242F-053, COHNDSE242F-054, COHNDSE242F-055, COHNDSE242F-072
-GitHub Submission Link: https://github.com/vihangarodrigo07/urbanfood-app
+- Batch: HNDSE24.2F | Module: Data Management 2 
+- Group No: 
+- Members:COHNDSE242F-053, COHNDSE242F-054, COHNDSE242F-055, COHNDSE242F-072 
+- GitHub Submission Link: https://github.com/vihangarodrigo07/urbanfood-app
 
 📌 Project Overview
 A full-stack e-commerce platform for UrbanFood, built to connect urban farmers with consumers. Key features:  
