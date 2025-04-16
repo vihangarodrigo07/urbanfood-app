@@ -46,6 +46,14 @@ export default function Home() {
       desc: "Customer feedback",
       color: "#FFEB3B", // Yellow
       textColor: "#333" // Dark text for better contrast
+    },
+    {
+      title: "Suppliers",
+      path: "/suppliers",
+      icon: "🏭", // Factory emoji
+      desc: "Vendor management",
+      color: "#FFCDD2",
+      textColor: "#333" // White text for better contrast on green
     }
   ];
 

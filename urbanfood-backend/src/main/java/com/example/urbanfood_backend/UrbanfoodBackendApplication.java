@@ -19,7 +19,7 @@ public class UrbanfoodBackendApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**")
-						.allowedOrigins("http://localhost:5173") // Changed to match your React app's port
+						.allowedOrigins("http://localhost:5173")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
