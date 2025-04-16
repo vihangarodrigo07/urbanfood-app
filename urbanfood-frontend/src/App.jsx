@@ -31,6 +31,7 @@ export default function App() {
             <Link to="/payments">Payments</Link>
             <Link to="/deliveries">Delivery</Link>
             <Link to="/suppliers">Suppliers</Link>
+            <Link to="/reviews">Reviews</Link>
             <button 
               onClick={toggleDarkMode} 
               className="dark-mode-toggle"
